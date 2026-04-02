@@ -1,0 +1,4 @@
+[wrap-git]
+url = https://gitlab.com/nda-cunh/brainlib.git
+revision = HEAD
+depth = 1
