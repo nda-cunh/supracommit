@@ -11,9 +11,10 @@ dependencies = [
   dependency('BrainLib', static: true),
 ]
 
-sources = [
+sources = files(
   'main.vala',
-]
+  'ParseOption.vala',
+)
 
 executable(
   'supracommit',

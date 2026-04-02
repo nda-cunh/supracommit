@@ -1,10 +1,12 @@
+const string PREFIX_COMMIT = "\033[35;1m[SupraCommit]\033[0m: ";
+
 [CCode (cname = "system", cheader_filename = "stdlib.h")]
-public extern void system(string command);
+public extern void system (string command);
 
 // supracommit est un logiciel qui permet de donner des commits a ses diff de git
 
 string get_prompt (string name_project, string diff) {
-	string prompt = """
+	const string prompt = """
 You are an expert developer specializing in Git workflow.
 Your task is to analyze the following Git diff and provide EXACTLY ONE concise, high-quality commit message following the **Conventional Commits** specification.
 
@@ -16,16 +18,14 @@ Your task is to analyze the following Git diff and provide EXACTLY ONE concise, 
 - **STRICT:** Output ONLY the raw commit message string.
 - **STRICT:** No introductory text, no quotes, no numbers, and no "Commit: " prefix.
 
-Project: [%s]
+Name Project: [%s]
 
 [BEGIN DIFF]
 %s
 [END DIFF]
 """;
 
-	var result = prompt.printf(name_project, diff);
-
-	return result;
+	return prompt.printf(name_project, diff);
 }
 
 string tell_IA_diff (string prompt) throws Error {
@@ -37,85 +37,7 @@ string tell_IA_diff (string prompt) throws Error {
 	return content;
 }
 
-const string PREFIX_COMMIT = "\033[35;1m[SupraCommit]\033[0m: ";
-
-
-[SingleInstance]
-class ParseOption : Object {
-	public static bool version = false;
-	public static bool config = false;
-	public static string API_KEY = null;
-	public static string MODEL = null;
-
-	private const GLib.OptionEntry[] options = {
-
-		{ "config", '\0', OptionFlags.NONE, OptionArg.NONE, ref config, "Configure SupraCommit", null },
-		// --version
-		{ "version", '\0', OptionFlags.NONE, OptionArg.NONE, ref version, "Display version number", null },
-		// list terminator
-		{ null }
-	};
-
-	public void parse (string[] args) {
-		var opt_context = new OptionContext ("- OptionContext example");
-		opt_context.set_help_enabled (true);
-		opt_context.add_main_entries (options, null);
-		opt_context.parse (ref args);
-
-		if (version) {
-			print ("SupraCommit version 1.0.0\n");
-			Process.exit (0);
-		}
-		if (config) {
-			// take EDITOR env variable and open it with EDITOR else open vim
-			var editor = Environment.get_variable ("EDITOR");
-			if (editor == null) {
-				editor = "vim";
-			}
-			var config_dir = Environment.get_user_config_dir () + "/supracommit";
-			var config_file = config_dir + "/config.json";
-			DirUtils.create_with_parents (config_dir, 0755);
-			if (!FileUtils.test (config_file, FileTest.EXISTS)) {
-				var default_content = "model: gemini-3.1-flash-lite-preview\napi_key: YOUR_API_KEY_HERE\n";
-				FileUtils.set_contents (config_file, default_content);
-				print ("Config file created at %s. Please edit it with your API key and model.\n", config_file);
-			}
-			system("%s %s".printf(editor, config_file));
-			Process.exit (0);
-		}
-
-		simple_parse_config();
-	}
-
-	private void simple_parse_config() {
-		var config_dir = Environment.get_user_config_dir () + "/supracommit";
-		var config_file = config_dir + "/config.json";
-		if (FileUtils.test (config_file, FileTest.EXISTS)) {
-			string content;
-			FileUtils.get_contents (config_file, out content);
-			var lines = content.split ("\n");
-			foreach (unowned var line in lines) {
-				if (line.has_prefix ("model:")) {
-					MODEL = line.substring (6).strip();
-				} else if (line.has_prefix ("api_key:")) {
-					API_KEY = line.substring (8).strip();
-				}
-			}
-			if (MODEL == null || API_KEY == null || API_KEY == "YOUR_API_KEY_HERE") {
-				printerr ("Config file is missing model or api_key. Please edit the config file at %s\n", config_file);
-				printerr ("Or run \033[94;1msupracommit --config\033[0m to create it.\n");
-				Process.exit (1);
-			}
-		} else {
-			printerr ("Config file not found at %s. Please run with --config to create it.\n", config_file);
-			Process.exit (1);
-		}
-
-
-	}
-}
-
-void main(string []av) {
+void main (string []av) {
 	Intl.setlocale ();
 
 
