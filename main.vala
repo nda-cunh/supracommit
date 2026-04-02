@@ -5,29 +5,6 @@ public extern void system (string command);
 
 // supracommit est un logiciel qui permet de donner des commits a ses diff de git
 
-string get_prompt (string name_project, string diff) {
-	const string prompt = """
-You are an expert developer specializing in Git workflow.
-Your task is to analyze the following Git diff and provide EXACTLY ONE concise, high-quality commit message following the **Conventional Commits** specification.
-
-### RULES:
-- Format: <type>(<scope>): <description>
-- Allowed types: feat, fix, docs, style, refactor, perf, test, build, ci, chore.
-- Use imperative mood, lowercase, and no period at the end.
-- The description must summarize ALL changes in the diff accurately.
-- **STRICT:** Output ONLY the raw commit message string.
-- **STRICT:** No introductory text, no quotes, no numbers, and no "Commit: " prefix.
-
-Name Project: [%s]
-
-[BEGIN DIFF]
-%s
-[END DIFF]
-""";
-
-	return prompt.printf(name_project, diff);
-}
-
 string tell_IA_diff (string prompt) throws Error {
 
 	var gemini = new Gemini(ParseOption.MODEL, ParseOption.API_KEY);
@@ -37,7 +14,7 @@ string tell_IA_diff (string prompt) throws Error {
 	return content;
 }
 
-void main (string []av) {
+public void main (string []av) {
 	Intl.setlocale ();
 
 
@@ -58,7 +35,7 @@ void main (string []av) {
 			return;
 		}
 
-		var prompt = get_prompt(repo_path, output);
+		var prompt = Format.get_prompt(repo_path, output);
 		var content = tell_IA_diff(prompt);
 		var commits = content.split ("\n- ");
 
@@ -83,6 +60,4 @@ void main (string []av) {
 	catch (Error e) {
 		printerr (PREFIX_COMMIT + "An error occurred: %s\n", e.message);
 	}
-
-
 }

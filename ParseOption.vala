@@ -4,6 +4,7 @@ class ParseOption : Object {
 	public static bool config = false;
 	public static string API_KEY = null;
 	public static string MODEL = null;
+	public static string FORMAT = null;
 
 	private const GLib.OptionEntry[] options = {
 
@@ -55,10 +56,21 @@ class ParseOption : Object {
 			var lines = content.split ("\n");
 			foreach (unowned var line in lines) {
 				if (line.has_prefix ("model:")) {
-					MODEL = line.substring (6).strip();
+					MODEL = line.substring (6)._strip();
 				} else if (line.has_prefix ("api_key:")) {
-					API_KEY = line.substring (8).strip();
+					API_KEY = line.substring (8)._strip();
 				}
+				else if (line.has_prefix ("format:")) {
+					FORMAT = line.substring (7)._strip();
+				}
+			}
+			if (FORMAT == null) {
+				FORMAT = "conventional_commits";
+			}
+			if (!Format.is_valid_format (FORMAT)) {
+				printerr ("Invalid format specified in config: %s\n", FORMAT);
+				printerr ("Supported formats: conventional_commits, gitmoji, atom, karma, 50/72\n");
+				Process.exit (1);
 			}
 			if (MODEL == null || API_KEY == null || API_KEY == "YOUR_API_KEY_HERE") {
 				printerr ("Config file is missing model or api_key. Please edit the config file at %s\n", config_file);
