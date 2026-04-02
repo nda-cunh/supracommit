@@ -37,8 +37,8 @@ Your task is to analyze the following Git diff and provide EXACTLY ONE concise, 
 Your task is to analyze the following Git diff and provide EXACTLY ONE concise commit message using the **Gitmoji** style.
 
 ### RULES:
-- Format: :emoji: <description>
-- Use the most relevant emoji (e.g., :sparkles: for feat, :bug: for fix, :recycle: for refactor).
+- Format: emoji <2-space> <description>
+- Use the actual Unicode emoji character (e.g., ♻️, ✨, 🐛) NOT the colon-code.
 - Use imperative mood, lowercase, and no period at the end.
 - **STRICT:** Output ONLY the raw commit message string starting with the emoji code.""";
 

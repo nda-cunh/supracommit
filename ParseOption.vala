@@ -27,29 +27,45 @@ class ParseOption : Object {
 		}
 
 		if (config) {
-			// take EDITOR env variable and open it with EDITOR else open vim
-			var editor = Environment.get_variable ("EDITOR");
-			if (editor == null) {
-				editor = "vim";
-			}
-			var config_dir = Environment.get_user_config_dir () + "/supracommit";
-			var config_file = config_dir + "/config.json";
-			DirUtils.create_with_parents (config_dir, 0755);
-			if (!FileUtils.test (config_file, FileTest.EXISTS)) {
-				var default_content = "model: gemini-3.1-flash-lite-preview\napi_key: YOUR_API_KEY_HERE\n";
-				FileUtils.set_contents (config_file, default_content);
-				print ("Config file created at %s. Please edit it with your API key and model.\n", config_file);
-			}
-			system("%s %s".printf(editor, config_file));
-			Process.exit (0);
+			open_config();
 		}
 
 		simple_parse_config();
 	}
 
+	[NoReturn]
+	public void open_config() {
+		var config_dir = Environment.get_user_config_dir () + "/supracommit";
+		var config_file = config_dir + "/config.yaml";
+
+		DirUtils.create_with_parents (config_dir, 0755);
+		if (!FileUtils.test (config_file, FileTest.EXISTS)) {
+			var default_content = """
+model: gemini-3.1-flash-lite-preview
+api_key: YOUR_API_KEY_HERE
+format: conventional_commits
+#Format can be one of: conventional_commits, gitmoji, atom, karma, 50/72
+# [Examples]:                [Format]                              [Example]
+# conventional_commits  <type>(<scope>): <desc>            fix(api): remove timeout
+# gitmoji               <emoji> <desc>                     🐛 fix api timeout
+# atom                  [<type>] <desc>	[fix]              remove api timeout
+# karma                 <type>(<scope>): <subj>            fix(api): remove timeout
+# 50/72                 Capitalized subject                Remove timeout from API
+""";
+			FileUtils.set_contents (config_file, default_content);
+			print ("Config file created at %s. Please edit it with your API key and model.\n", config_file);
+		}
+		var editor = Environment.get_variable ("EDITOR");
+		if (editor == null) {
+			editor = "vim";
+		}
+		system("%s %s".printf(editor, config_file));
+		Process.exit (0);
+	}
+
 	private void simple_parse_config() {
 		var config_dir = Environment.get_user_config_dir () + "/supracommit";
-		var config_file = config_dir + "/config.json";
+		var config_file = config_dir + "/config.yaml";
 		if (FileUtils.test (config_file, FileTest.EXISTS)) {
 			string content;
 			FileUtils.get_contents (config_file, out content);
@@ -79,7 +95,7 @@ class ParseOption : Object {
 			}
 		} else {
 			printerr ("Config file not found at %s. Please run with --config to create it.\n", config_file);
-			Process.exit (1);
+			open_config();
 		}
 
 
