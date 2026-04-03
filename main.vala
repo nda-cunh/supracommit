@@ -17,11 +17,11 @@ string tell_IA_diff (string prompt) throws Error {
 public void main (string []av) {
 	Intl.setlocale ();
 
-
-	var options = new ParseOption();
-	options.parse (av);
-
 	try {
+
+
+		var options = new ParseOption();
+		options.parse (av);
 
 		string output;
 		string errput;
