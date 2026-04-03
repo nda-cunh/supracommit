@@ -69,7 +69,7 @@ class ParseOption : Object {
 			HELP_TEXT = null;
 
 		if (version) {
-			print ("SupraCommit version 1.0.0\n");
+			print ("SupraCommit version %s\n", Config.VERSION);
 			Process.exit (0);
 		}
 
