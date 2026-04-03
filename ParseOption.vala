@@ -2,35 +2,35 @@ private const string DESCRIPTION =
     "\033[1;34m=======================================================================\033[0m\n" +
     "  \033[1;32mSupraCommit\033[0m - AI-Powered Git Commit Generator\n" +
     "\033[1;34m=======================================================================\033[0m\n\n" +
-    "Un outil qui génère des messages de commit intelligents via IA.\n" +
-    "Supporte plusieurs formats, modèles et clés d'API.\n\n" +
-    "\033[1;33mUSAGE GÉNÉRAL :\033[0m\n" +
-    "  \033[1m$\033[0m supracommit              \033[3mGénère un commit basé sur les fichiers 'staged'\033[0m\n" +
-    "  \033[1m$\033[0m supracommit --config     \033[3mOuvre le fichier de configuration\033[0m\n" +
-    "  \033[1m$\033[0m supracommit --version    \033[3mAffiche la version\033[0m\n\n" +
-    "\033[1;33mAJOUT DE CONTEXTE :\033[0m\n" +
-    "  Utilisez \033[1;36m--\033[0m pour guider l'IA avec des instructions spécifiques :\n" +
-    "  \033[1m$\033[0m supracommit -- \"Ajout de la feature X et correction du bug #12\"\n\n" +
+	"An AI-powered tool that generates intelligent commit messages based on staged files.\n" +
+	" Supports multiple formats, models, and API keys.\n\n" +
+    "\033[1;33mUSAGE:\033[0m\n" +
+    "  \033[1m$\033[0m supracommit              \033[3mGenerate a commit message based on staged files\033[0m\n" +
+    "  \033[1m$\033[0m supracommit --config     \033[3mOpen the configuration file\033[0m\n" +
+    "  \033[1m$\033[0m supracommit --version    \033[3mDisplay the version\033[0m\n\n" +
+    "\033[1;33mHELP:\033[0m\n" +
+    "  Use \033[1;36m--\033[0m to provide specific instructions to the AI:\n" +
+    "  \033[1m$\033[0m supracommit -- \"Add feature X and fix bug #12\"\n\n" +
     "\033[34m-----------------------------------------------------------------------\033[0m";
-private const string DEFAULT_CONTENT = """
-# =========================================================================
-# SupraCommit Configuration File
+
+private const string DEFAULT_CONTENT = """# =========================================================================
+# SupraCommit - AI-Powered Git Commit Generator
 # =========================================================================
 
-# Votre clé API (obtenez-la sur https://aistudio.google.com/)
+# Your API key (get it from https://aistudio.google.com/)
 api_key: %s 
 
-# Modèle de langage à utiliser
+# The AI model to use for generating commit messages.
 model: %s 
 
-# Format du message de commit
-# Valeurs possibles : conventional_commits, gitmoji, atom, karma, 50/72
+# The format for the generated commit messages.
+# Supported formats: conventional_commits, gitmoji, atom, karma, 50/72
 format: %s 
 
 # -------------------------------------------------------------------------
-# EXEMPLES DE FORMATS :
+# Example formats for commit messages:
 # -------------------------------------------------------------------------
-# format                | structure                   | exemple
+# format                | structure                   | example
 # ----------------------|-----------------------------|---------------------
 # conventional_commits  | <type>(<scope>): <desc>     | fix(api): fix bug
 # gitmoji               | <emoji> <desc>              | 🐛 fix api bug
