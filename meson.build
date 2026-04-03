@@ -14,7 +14,9 @@ dependencies = [
 sources = files(
   'main.vala',
   'ParseOption.vala',
-  'Format.vala'
+  'Format.vala',
+  'SupraCommit.vala',
+  'Utils.vala'
 )
 
 executable(

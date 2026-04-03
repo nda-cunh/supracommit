@@ -51,9 +51,7 @@ class ParseOption : Object {
 
 	private const GLib.OptionEntry[] options = {
 		{ "config", '\0', OptionFlags.NONE, OptionArg.NONE, ref config, "Configure SupraCommit", null },
-		// --version
 		{ "version", '\0', OptionFlags.NONE, OptionArg.NONE, ref version, "Display version number", null },
-		// list terminator
 		{ null }
 	};
 
