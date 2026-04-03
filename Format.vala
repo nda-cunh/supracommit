@@ -76,13 +76,19 @@ Your task is to analyze the following Git diff and provide EXACTLY ONE commit me
 
 	string get_prompt (string name_project, string diff) {
 		const string prompt = """%s	Name Project: [%s]
-
+%s
 	[BEGIN DIFF]
 	%s
 	[END DIFF]
 	""";
+		string context;
+		if (ParseOption.HELP_TEXT == null)
+			context = "";
+		else {
+			context = "Additional context: " + ParseOption.HELP_TEXT;
+		}
 
 		var rules = get_prompt_from_format();
-		return prompt.printf(rules, name_project, diff);
+		return prompt.printf(rules, name_project, context, diff);
 	}
 }
