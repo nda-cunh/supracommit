@@ -48,7 +48,7 @@ format: conventional_commits
 # [Examples]:                [Format]                              [Example]
 # conventional_commits  <type>(<scope>): <desc>            fix(api): remove timeout
 # gitmoji               <emoji> <desc>                     🐛 fix api timeout
-# atom                  [<type>] <desc>	[fix]              remove api timeout
+# atom                  [<type>] <desc>	[fix]              [fix] remove api timeout
 # karma                 <type>(<scope>): <subj>            fix(api): remove timeout
 # 50/72                 Capitalized subject                Remove timeout from API
 """;
