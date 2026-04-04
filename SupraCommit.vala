@@ -10,7 +10,7 @@ public errordomain SupraCommitError {
  * @throws Error If there is an issue with the API call or response processing.
  */
 private string tell_IA_diff (string prompt) throws Error {
-	var gemini = new Gemini(ParseOption.MODEL, ParseOption.API_KEY);
+	var gemini = Brain.create(ParseOption.MODEL, ParseOption.API_KEY);
 	var msg = gemini.send(prompt);
 
 	var content = "\n" + msg.content;
