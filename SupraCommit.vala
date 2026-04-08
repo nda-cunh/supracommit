@@ -71,7 +71,10 @@ public void run_supracommit () throws Error {
 		return;
 	}
 
+	debug ("Repo path: %s\n\n\n", repo_path);
+
 	var prompt = Format.get_prompt(repo_path, git_diff);
+	debug ("Prompt sent to AI: \n%s\n\n\n", prompt);
 	var content = tell_IA_diff(prompt);
 
 	var commits = content.split ("\n- ");
