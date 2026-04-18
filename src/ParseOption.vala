@@ -131,9 +131,6 @@ public class ParseOption : Object {
 		}
 		else {
 			simple_parse_config();
-			print ("MODEL %s\n", ParseOption.MODEL);
-			print ("API_KEY %s\n", ParseOption.API_KEY);
-			print ("FORMAT %s\n", ParseOption.FORMAT);
 			FileUtils.set_contents (config_file, get_default_content());
 		}
 		var editor = Environment.get_variable ("EDITOR");
