@@ -41,9 +41,10 @@ format: %s
 """;
 
 [SingleInstance]
-class ParseOption : Object {
+public class ParseOption : Object {
 	public static bool version = false;
 	public static bool config = false;
+	public static bool skip_ci = false;
 	public static string? API_KEY = null;
 	public static string? MODEL = null;
 	public static string? FORMAT = null;
@@ -52,6 +53,7 @@ class ParseOption : Object {
 	private const GLib.OptionEntry[] options = {
 		{ "config", '\0', OptionFlags.NONE, OptionArg.NONE, ref config, "Configure SupraCommit", null },
 		{ "version", '\0', OptionFlags.NONE, OptionArg.NONE, ref version, "Display version number", null },
+		{ "skip-ci", '\0', OptionFlags.NONE, OptionArg.NONE, ref skip_ci, "Add [skip ci] to the commit message", null },
 		{ null }
 	};
 

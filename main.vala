@@ -1,11 +1,13 @@
 public const string PREFIX_COMMIT = "\033[35;1m[SupraCommit]\033[0m: ";
+public unowned ParseOption options;
 
 public void main (string []av) {
 	Intl.setlocale ();
 
 	try {
-		var options = new ParseOption();
-		options.parse (av);
+		var _options = new ParseOption();
+		options = _options;
+		_options.parse (av);
 
 		run_supracommit ();
 	}
