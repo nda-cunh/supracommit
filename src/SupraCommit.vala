@@ -83,7 +83,7 @@ public void run_supracommit () throws Error {
 		return;
 	}
 	var commit = commits[0]._strip();
-	if (options.skip_ci) {
+	if (ParseOption.skip_ci) {
 		commit += " [skip ci]";
 	}
 	print (PREFIX_COMMIT + " \033[1mProposed commit message:\033[0m\n");
