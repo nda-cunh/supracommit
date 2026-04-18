@@ -17,13 +17,8 @@ dependencies = [
 
 config_vala_file = configure_file(input : 'Config.vala.in', output : 'Config.vala', configuration : conf_data)
 
-sources = files(
-  'main.vala',
-  'ParseOption.vala',
-  'Format.vala',
-  'SupraCommit.vala',
-  'Utils.vala'
-)
+sources = []
+subdir('src')
 
 executable(
   'supracommit',

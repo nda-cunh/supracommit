@@ -45,6 +45,7 @@ public class ParseOption : Object {
 	public static bool version = false;
 	public static bool config = false;
 	public static bool skip_ci = false;
+	public static bool list_options = false;
 	public static string? API_KEY = null;
 	public static string? MODEL = null;
 	public static string? FORMAT = null;
@@ -54,6 +55,7 @@ public class ParseOption : Object {
 		{ "config", '\0', OptionFlags.NONE, OptionArg.NONE, ref config, "Configure SupraCommit", null },
 		{ "version", '\0', OptionFlags.NONE, OptionArg.NONE, ref version, "Display version number", null },
 		{ "skip-ci", '\0', OptionFlags.NONE, OptionArg.NONE, ref skip_ci, "Add [skip ci] to the commit message", null },
+		{ "list-options", '\0', OptionFlags.HIDDEN, OptionArg.NONE, ref list_options, null, null },
 		{ null }
 	};
 
@@ -73,6 +75,15 @@ public class ParseOption : Object {
 		if (version) {
 			print ("SupraCommit version %s\n", Config.VERSION);
 			Process.exit (0);
+		}
+
+		if (list_options) {
+			foreach (unowned var entry in options) {
+				if (entry.long_name != null && entry.long_name != "list-options") {
+					stdout.printf("--%s\n", entry.long_name);
+				}
+			}
+			Process.exit(0);
 		}
 
 		if (config) {
