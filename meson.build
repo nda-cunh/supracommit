@@ -8,7 +8,6 @@ project(
 conf_data = configuration_data()
 conf_data.set('version', meson.project_version())
 
-
 dependencies = [
   dependency('glib-2.0'),
   dependency('gobject-2.0'),
@@ -28,3 +27,5 @@ executable(
   c_args: '-w',
   install : true,
 )
+
+subdir('completion')
