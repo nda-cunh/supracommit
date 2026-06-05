@@ -12,8 +12,7 @@ namespace Format {
 	}
 
 	private unowned string get_prompt_from_format () {
-		var config = new ParseOption();
-		var format = config.FORMAT;
+		var format = ParseOption.FORMAT;
 		if (!is_valid_format (format)) {
 			printerr ("Invalid format specified in config: %s\n", format);
 			printerr ("Supported formats: conventional_commits, gitmoji, atom, karma, 50/72\n");

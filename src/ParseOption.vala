@@ -56,6 +56,8 @@ public class ParseOption : Object {
 		{ "version", '\0', OptionFlags.NONE, OptionArg.NONE, ref version, "Display version number", null },
 		{ "skip-ci", '\0', OptionFlags.NONE, OptionArg.NONE, ref skip_ci, "Add [skip ci] to the commit message", null },
 		{ "list-options", '\0', OptionFlags.HIDDEN, OptionArg.NONE, ref list_options, null, null },
+		{ "model", '\0', OptionFlags.NONE, OptionArg.STRING, ref MODEL, "Specify the AI model to use", null },
+		{ "format", '\0', OptionFlags.NONE, OptionArg.STRING, ref FORMAT, "Specify the format for commit messages", null },
 		{ null }
 	};
 
@@ -65,7 +67,11 @@ public class ParseOption : Object {
 		opt_context.add_main_entries (options, null);
 		opt_context.set_ignore_unknown_options(false);
 		opt_context.set_description(DESCRIPTION);
+
+		simple_parse_config();
+
 		opt_context.parse (ref args);
+
 
 		if (args.length > 1)
 			HELP_TEXT = string.joinv(" ", args[1:]);
@@ -89,8 +95,6 @@ public class ParseOption : Object {
 		if (config) {
 			open_config();
 		}
-
-		simple_parse_config();
 
 		if (FORMAT == null) {
 			FORMAT = "conventional_commits";
