@@ -1,5 +1,24 @@
 namespace Format {
 
+	public string get_prompt () throws Error {
+		string name_project;
+		string diff = Git.diff(out name_project);
+
+		if (diff == "") {
+			throw new SupraCommitError.DIFF_EMPTY("git add some files before using supraCommit");
+		}
+
+		string context;
+		if (ParseOption.HELP_TEXT == null) {
+			context = "";
+		} else {
+			context = "Additional context: " + ParseOption.HELP_TEXT;
+		}
+
+		var rules = get_prompt_from_format();
+		return PROMPT.printf(rules, name_project, context, diff);
+	}
+
 	public bool is_valid_format (string format) {
 		const string formats[] = {
 			"conventional_commits",
@@ -13,10 +32,10 @@ namespace Format {
 
 	private unowned string get_prompt_from_format () {
 		var format = ParseOption.FORMAT;
-		if (!is_valid_format (format)) {
-			printerr ("Invalid format specified in config: %s\n", format);
-			printerr ("Supported formats: conventional_commits, gitmoji, atom, karma, 50/72\n");
-			Process.exit (1);
+		if (!is_valid_format(format)) {
+			printerr("Invalid format specified in config: %s\n", format);
+			printerr("Supported formats: conventional_commits, gitmoji, atom, karma, 50/72\n");
+			Process.exit(1);
 		}
 		switch (format) {
 			default:
@@ -25,7 +44,7 @@ namespace Format {
 Your task is to analyze the following Git diff and provide EXACTLY ONE concise, high-quality commit message following the **Conventional Commits** specification.
 
 ### RULES:
-- Format: <type>(<scope>): <description>
+- Format: <type> (<scope>): <description>
 - Allowed types: feat, fix, docs, style, refactor, perf, test, build, ci, chore.
 - Use imperative mood, lowercase, and no period at the end.
 - The description must summarize ALL changes in the diff accurately.
@@ -56,7 +75,7 @@ Your task is to analyze the following Git diff and provide EXACTLY ONE concise c
 Your task is to analyze the following Git diff and provide EXACTLY ONE commit message following the **Karma** style.
 
 ### RULES:
-- Format: <type>(<scope>): <subject>
+- Format: <type> (<scope>): <subject>
 - Allowed types: feat, fix, docs, style, refactor, test, chore.
 - The subject must be a short description of the change.
 - **STRICT:** Output ONLY the raw message string.""";
@@ -72,22 +91,17 @@ Your task is to analyze the following Git diff and provide EXACTLY ONE commit me
 		}
 	}
 
-
-	string get_prompt (string name_project, string diff) {
-		const string prompt = """%s	Name Project: [%s]
-%s
-	[BEGIN DIFF]
-	%s
-	[END DIFF]
-	""";
-		string context;
-		if (ParseOption.HELP_TEXT == null)
-			context = "";
-		else {
-			context = "Additional context: " + ParseOption.HELP_TEXT;
-		}
-
-		var rules = get_prompt_from_format();
-		return prompt.printf(rules, name_project, context, diff);
-	}
 }
+
+/**
+ * The Prompt Template
+ * %s - The rules for the specified format
+ * %s - The name of the project (git repository)
+ */
+private const string PROMPT =
+"""%s	Name Project: [%s]
+%s
+[BEGIN DIFF]
+%s
+[END DIFF]
+""";

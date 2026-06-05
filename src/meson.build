@@ -1,7 +1,9 @@
 sources = files(
-  'main.vala',
-  'ParseOption.vala',
+  'Error.vala',
   'Format.vala',
+  'Git.vala',
+  'ParseOption.vala',
   'SupraCommit.vala',
-  'Utils.vala'
+  'Utils.vala',
+  'main.vala',
 )

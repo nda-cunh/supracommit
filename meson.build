@@ -2,7 +2,7 @@ project(
   'supracommit',
   'vala',
   meson_version : '>= 1.0.0',
-  version : '1.6',
+  version : '1.7',
 )
 
 conf_data = configuration_data()

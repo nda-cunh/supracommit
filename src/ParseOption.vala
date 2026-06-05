@@ -38,10 +38,16 @@ format: %s
 # karma                 | <type>(<scope>): <subj>     | fix(api): fix bug
 # 50/72                 | Capitalized (50 char max)   | Fix bug in API
 # -------------------------------------------------------------------------
+
+# The number of last commits to include in the context sent to the AI. This can help the AI understand the recent history of changes.
+
+length_of_last_commit: %d
 """;
 
 [SingleInstance]
 public class ParseOption : Object {
+
+	public static int LENGTH_OF_LAST_COMMIT = -1;
 	public static bool version = false;
 	public static bool config = false;
 	public static bool skip_ci = false;
@@ -61,7 +67,7 @@ public class ParseOption : Object {
 		{ null }
 	};
 
-	public void parse (string[] args) throws Error {
+	public int parse (string[] args) throws FileError, OptionError {
 		var opt_context = new OptionContext ("- Generate commit messages using AI");
 		opt_context.set_help_enabled (true);
 		opt_context.add_main_entries (options, null);
@@ -70,7 +76,7 @@ public class ParseOption : Object {
 
 		simple_parse_config();
 
-		opt_context.parse (ref args);
+		opt_context.parse(ref args);
 
 
 		if (args.length > 1)
@@ -79,8 +85,8 @@ public class ParseOption : Object {
 			HELP_TEXT = null;
 
 		if (version) {
-			print ("SupraCommit version %s\n", Config.VERSION);
-			Process.exit (0);
+			print("SupraCommit version %s\n", Config.VERSION);
+			return 0;
 		}
 
 		if (list_options) {
@@ -89,7 +95,7 @@ public class ParseOption : Object {
 					stdout.printf("--%s\n", entry.long_name);
 				}
 			}
-			Process.exit(0);
+			return 0;
 		}
 
 		if (config) {
@@ -100,75 +106,85 @@ public class ParseOption : Object {
 			FORMAT = "conventional_commits";
 		}
 
-		if (!Format.is_valid_format (FORMAT)) {
-			printerr ("Invalid format specified in config: %s\n", FORMAT);
-			printerr ("Supported formats: conventional_commits, gitmoji, atom, karma, 50/72\n");
-			Process.exit (1);
+		if (!Format.is_valid_format(FORMAT)) {
+			printerr("Invalid format specified in config: %s\n", FORMAT);
+			printerr("Supported formats: conventional_commits, gitmoji, atom, karma, 50/72\n");
+			return 1;
+		}
+
+		if (LENGTH_OF_LAST_COMMIT == -1) {
+			LENGTH_OF_LAST_COMMIT = 5;
 		}
 
 		if (MODEL == null || API_KEY == null || API_KEY == "YOUR_API_KEY_HERE") {
-			printerr ("Config file is missing model or api_key. Please edit the config file at %s.\n", Environment.get_user_config_dir () + "/supracommit/config.yaml");
-			printerr ("Or run \033[94;1msupracommit --config\033[0m to create it.\n");
-			Process.exit (1);
+			printerr("Config file is missing model or api_key. Please edit the config file at %s.\n", Environment.get_user_config_dir() + "/supracommit/config.yaml");
+			printerr("Or run \033[94;1msupracommit --config\033[0m to create it.\n");
+			return 1;
 		}
+		return 42;
 	}
 
-	private string get_default_content() {
+	private string get_default_content () {
 		if (ParseOption.MODEL == null)
 			ParseOption.MODEL = "gemini-3.1-flash-lite-preview";
 		if (ParseOption.FORMAT == null)
 			ParseOption.FORMAT = "conventional_commits";
 		if (ParseOption.API_KEY == null)
 			ParseOption.API_KEY = "YOUR_API_KEY_HERE";
-		return DEFAULT_CONTENT.printf(API_KEY, MODEL, FORMAT);
+		if (ParseOption.LENGTH_OF_LAST_COMMIT == -1)
+			ParseOption.LENGTH_OF_LAST_COMMIT = 5;
+		return DEFAULT_CONTENT.printf(API_KEY, MODEL, FORMAT, LENGTH_OF_LAST_COMMIT);
 	}
 
 	[NoReturn]
-	public void open_config () throws Error {
-		var config_dir = Environment.get_user_config_dir () + "/supracommit";
+	public void open_config () throws FileError {
+		var config_dir = Environment.get_user_config_dir() + "/supracommit";
 		var config_file = config_dir + "/config.yaml";
 
-		DirUtils.create_with_parents (config_dir, 0755);
-		if (!FileUtils.test (config_file, FileTest.EXISTS)) {
-			FileUtils.set_contents (config_file, get_default_content());
-			print ("Config file created at %s. Please edit it with your API key and model.\n", config_file);
-		}
-		else {
+		DirUtils.create_with_parents(config_dir, 0755);
+
+		if (!FileUtils.test(config_file, FileTest.EXISTS)) {
+			FileUtils.set_contents(config_file, get_default_content());
+			print("Config file created at %s. Please edit it with your API key and model.\n", config_file);
+		} else {
 			simple_parse_config();
-			FileUtils.set_contents (config_file, get_default_content());
+			FileUtils.set_contents(config_file, get_default_content());
 		}
-		var editor = Environment.get_variable ("EDITOR");
+
+		var editor = Environment.get_variable("EDITOR");
 		if (editor == null) {
 			editor = "vim";
 		}
+
 		system("%s %s".printf(editor, config_file));
 		Process.exit (0);
 	}
 
-	private void simple_parse_config () throws Error {
+	private void simple_parse_config () throws FileError {
 		var config_dir = Environment.get_user_config_dir () + "/supracommit";
 		var config_file = config_dir + "/config.yaml";
-		if (FileUtils.test (config_file, FileTest.EXISTS)) {
+
+		if (FileUtils.test(config_file, FileTest.EXISTS)) {
 			string content;
-			FileUtils.get_contents (config_file, out content);
-			var lines = content.split ("\n");
+
+			FileUtils.get_contents(config_file, out content);
+			var lines = content.split("\n");
+
 			foreach (unowned var line in lines) {
-				if (line.has_prefix ("model:")) {
-					MODEL = line.substring (6)._strip();
-				} else if (line.has_prefix ("api_key:")) {
-					API_KEY = line.substring (8)._strip();
-				}
-				else if (line.has_prefix ("format:")) {
-					FORMAT = line.substring (7)._strip();
+				if (line.has_prefix("model:")) {
+					MODEL = line.substring(6)._strip();
+				} else if (line.has_prefix("api_key:")) {
+					API_KEY = line.substring(8)._strip();
+				} else if (line.has_prefix("length_of_last_commit:")) {
+					LENGTH_OF_LAST_COMMIT = int.parse(line.substring(21)._strip());
+				} else if (line.has_prefix("format:")) {
+					FORMAT = line.substring(7)._strip();
 				}
 			}
-		}
-		else {
-			printerr ("Config file not found at %s. Please run with --config to create it.\n", config_file);
+
+		} else {
+			printerr("Config file not found at %s. Please run with --config to create it.\n", config_file);
 			open_config();
 		}
-
-
 	}
 }
-
