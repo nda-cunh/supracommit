@@ -112,8 +112,8 @@ public class ParseOption : Object {
 			return 1;
 		}
 
-		if (LENGTH_OF_LAST_COMMIT == -1) {
-			LENGTH_OF_LAST_COMMIT = 5;
+		if (LENGTH_OF_LAST_COMMIT <= -1) {
+			LENGTH_OF_LAST_COMMIT = 0;
 		}
 
 		if (MODEL == null || API_KEY == null || API_KEY == "YOUR_API_KEY_HERE") {
@@ -131,8 +131,8 @@ public class ParseOption : Object {
 			ParseOption.FORMAT = "conventional_commits";
 		if (ParseOption.API_KEY == null)
 			ParseOption.API_KEY = "YOUR_API_KEY_HERE";
-		if (ParseOption.LENGTH_OF_LAST_COMMIT == -1)
-			ParseOption.LENGTH_OF_LAST_COMMIT = 5;
+		if (ParseOption.LENGTH_OF_LAST_COMMIT <= -1)
+			ParseOption.LENGTH_OF_LAST_COMMIT = 0;
 		return DEFAULT_CONTENT.printf(API_KEY, MODEL, FORMAT, LENGTH_OF_LAST_COMMIT);
 	}
 
@@ -176,7 +176,7 @@ public class ParseOption : Object {
 				} else if (line.has_prefix("api_key:")) {
 					API_KEY = line.substring(8)._strip();
 				} else if (line.has_prefix("length_of_last_commit:")) {
-					LENGTH_OF_LAST_COMMIT = int.parse(line.substring(21)._strip());
+					LENGTH_OF_LAST_COMMIT = int.parse(line.substring(22)._strip());
 				} else if (line.has_prefix("format:")) {
 					FORMAT = line.substring(7)._strip();
 				}

@@ -8,11 +8,16 @@ namespace Format {
 			throw new SupraCommitError.DIFF_EMPTY("git add some files before using supraCommit");
 		}
 
-		string context;
-		if (ParseOption.HELP_TEXT == null) {
-			context = "";
-		} else {
-			context = "Additional context: " + ParseOption.HELP_TEXT;
+		var last_commit = Git.last_commits (ParseOption.LENGTH_OF_LAST_COMMIT);
+
+		string context = "";
+
+		if (last_commit.length > 0) {
+			context += "Context (the format rules above take priority): these are the last %d commits — if the current change is related to the same topic or scope, mirror the exact phrasing pattern of the subject:\n%s\n".printf(last_commit.length, string.joinv("\n", last_commit));
+		}
+
+		if (ParseOption.HELP_TEXT != null) {
+			context += "Additional context: " + ParseOption.HELP_TEXT;
 		}
 
 		var rules = get_prompt_from_format();
@@ -44,7 +49,7 @@ namespace Format {
 Your task is to analyze the following Git diff and provide EXACTLY ONE concise, high-quality commit message following the **Conventional Commits** specification.
 
 ### RULES:
-- Format: <type> (<scope>): <description>
+- Format: <type>(<scope>): <description>
 - Allowed types: feat, fix, docs, style, refactor, perf, test, build, ci, chore.
 - Use imperative mood, lowercase, and no period at the end.
 - The description must summarize ALL changes in the diff accurately.
