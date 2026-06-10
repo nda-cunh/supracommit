@@ -16,7 +16,7 @@ namespace Git {
         Process.spawn_command_line_sync("git log -n " + count.to_string() + " --pretty=format:%s", out output, out errput, out status);
 
         if (status != 0)
-            throw new SupraCommitError.GIT_ERROR("Git: %s", errput);
+            return {};
 
         return output.split("\n");
     }
